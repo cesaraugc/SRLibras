@@ -1,0 +1,159 @@
+name: srlibras
+description: A new Flutter project.
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  mlkit: ^0.15.0
+  flutter_tts: ^0.6.0
+
+  path_provider: ^1.3.1
+  ml_linalg: ^12.7.1
+  queries: ^0.1.12
+  strings: ^0.1.2
+  permission_handler: '^4.0.0'
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^0.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_blue:
+    path: ./flutter_blue-0.6.3-personalized/
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  assets:
+    - assets/models/model.tflite
+    - assets/models/model_FT.tflite
+    - assets/models/model_rbfn.tflite
+    - assets/_datasets/dataset_test.csv
+    - assets/_datasets/dataset_train.csv 
+    - assets/_datasets/dataset_validation.csv
+    - assets/_datasets/labels_test.csv 
+    - assets/_datasets/labels_train.csv
+    - assets/_datasets/labels_validation.csv
+
+    - assets/models/MLP_sigmoide/1_model_mlp.tflite
+    - assets/models/MLP_sigmoide/2_model_mlp.tflite
+    - assets/models/MLP_sigmoide/3_model_mlp.tflite
+    - assets/models/MLP_sigmoide/4_model_mlp.tflite
+    - assets/models/MLP_sigmoide/5_model_mlp.tflite
+    - assets/models/MLP_sigmoide/6_model_mlp.tflite
+    - assets/models/MLP_sigmoide/7_model_mlp.tflite
+    - assets/models/MLP_sigmoide/8_model_mlp.tflite
+    - assets/models/MLP_sigmoide/9_model_mlp.tflite
+    - assets/models/MLP_sigmoide/10_model_mlp.tflite
+    - assets/models/MLP_sigmoide/11_model_mlp.tflite
+    - assets/models/MLP_sigmoide/12_model_mlp.tflite
+    - assets/models/MLP_sigmoide/13_model_mlp.tflite
+    - assets/models/MLP_sigmoide/14_model_mlp.tflite
+    - assets/models/MLP_sigmoide/15_model_mlp.tflite
+    - assets/models/MLP_sigmoide/16_model_mlp.tflite
+    - assets/models/MLP_sigmoide/17_model_mlp.tflite
+    - assets/models/MLP_sigmoide/18_model_mlp.tflite
+    - assets/models/MLP_sigmoide/19_model_mlp.tflite
+    - assets/models/MLP_sigmoide/20_model_mlp.tflite
+
+    - assets/models/MLP_relu/1_model_mlp.tflite
+    - assets/models/MLP_relu/2_model_mlp.tflite
+    - assets/models/MLP_relu/3_model_mlp.tflite
+    - assets/models/MLP_relu/4_model_mlp.tflite
+    - assets/models/MLP_relu/5_model_mlp.tflite
+    - assets/models/MLP_relu/6_model_mlp.tflite
+    - assets/models/MLP_relu/7_model_mlp.tflite
+    - assets/models/MLP_relu/8_model_mlp.tflite
+    - assets/models/MLP_relu/9_model_mlp.tflite
+    - assets/models/MLP_relu/10_model_mlp.tflite
+    - assets/models/MLP_relu/11_model_mlp.tflite
+    - assets/models/MLP_relu/12_model_mlp.tflite
+    - assets/models/MLP_relu/13_model_mlp.tflite
+    - assets/models/MLP_relu/14_model_mlp.tflite
+    - assets/models/MLP_relu/15_model_mlp.tflite
+    - assets/models/MLP_relu/16_model_mlp.tflite
+    - assets/models/MLP_relu/17_model_mlp.tflite
+    - assets/models/MLP_relu/18_model_mlp.tflite
+    - assets/models/MLP_relu/19_model_mlp.tflite
+    - assets/models/MLP_relu/20_model_mlp.tflite
+
+    - assets/models/RBFN_1/27_model_rbfn.tflite
+    - assets/models/RBFN_1/54_model_rbfn.tflite
+    - assets/models/RBFN_1/81_model_rbfn.tflite
+    - assets/models/RBFN_1/108_model_rbfn.tflite
+    - assets/models/RBFN_1/135_model_rbfn.tflite
+    - assets/models/RBFN_1/162_model_rbfn.tflite
+    - assets/models/RBFN_1/189_model_rbfn.tflite
+    - assets/models/RBFN_1/216_model_rbfn.tflite
+    - assets/models/RBFN_1/243_model_rbfn.tflite
+    - assets/models/RBFN_1/270_model_rbfn.tflite
+
+    - assets/models/RBFN_2/27_model_rbfn.tflite
+    - assets/models/RBFN_2/54_model_rbfn.tflite
+    - assets/models/RBFN_2/81_model_rbfn.tflite
+    - assets/models/RBFN_2/108_model_rbfn.tflite
+    - assets/models/RBFN_2/135_model_rbfn.tflite
+    - assets/models/RBFN_2/162_model_rbfn.tflite
+    - assets/models/RBFN_2/189_model_rbfn.tflite
+    - assets/models/RBFN_2/216_model_rbfn.tflite
+    - assets/models/RBFN_2/243_model_rbfn.tflite
+    - assets/models/RBFN_2/270_model_rbfn.tflite
+
+    - assets/models/RBFN_05/27_model_rbfn.tflite
+    - assets/models/RBFN_05/54_model_rbfn.tflite
+    - assets/models/RBFN_05/81_model_rbfn.tflite
+    - assets/models/RBFN_05/108_model_rbfn.tflite
+    - assets/models/RBFN_05/135_model_rbfn.tflite
+    - assets/models/RBFN_05/162_model_rbfn.tflite
+    - assets/models/RBFN_05/189_model_rbfn.tflite
+    - assets/models/RBFN_05/216_model_rbfn.tflite
+    - assets/models/RBFN_05/243_model_rbfn.tflite
+    - assets/models/RBFN_05/270_model_rbfn.tflite
+
+    - assets/_datasets/k-means_centroides/por_letra/27_clusters.csv
+    - assets/_datasets/k-means_centroides/por_letra/27_labels_knn-kmeans.csv
+    - assets/_datasets/k-means_centroides/por_letra/54_clusters.csv
+    - assets/_datasets/k-means_centroides/por_letra/54_labels_knn-kmeans.csv
+    - assets/_datasets/k-means_centroides/por_letra/81_clusters.csv
+    - assets/_datasets/k-means_centroides/por_letra/81_labels_knn-kmeans.csv
+    - assets/_datasets/k-means_centroides/por_letra/108_clusters.csv
+    - assets/_datasets/k-means_centroides/por_letra/108_labels_knn-kmeans.csv
+    - assets/_datasets/k-means_centroides/por_letra/135_clusters.csv
+    - assets/_datasets/k-means_centroides/por_letra/135_labels_knn-kmeans.csv
+    - assets/_datasets/k-means_centroides/por_letra/162_clusters.csv
+    - assets/_datasets/k-means_centroides/por_letra/162_labels_knn-kmeans.csv
+    - assets/_datasets/k-means_centroides/por_letra/189_clusters.csv
+    - assets/_datasets/k-means_centroides/por_letra/189_labels_knn-kmeans.csv
+    - assets/_datasets/k-means_centroides/por_letra/216_clusters.csv
+    - assets/_datasets/k-means_centroides/por_letra/216_labels_knn-kmeans.csv
+    - assets/_datasets/k-means_centroides/por_letra/243_clusters.csv
+    - assets/_datasets/k-means_centroides/por_letra/243_labels_knn-kmeans.csv
+    - assets/_datasets/k-means_centroides/por_letra/270_clusters.csv
+    - assets/_datasets/k-means_centroides/por_letra/270_labels_knn-kmeans.csv

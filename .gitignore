@@ -1,0 +1,79 @@
+.vscode/*
+classificadores/.ipynb_checkpoints/
+srlibras-app/.idea/
+srlibras-app/.vscode/
+srlibras-app/android/app/google-services.json
+
+# Miscellaneous
+srlibras-app/*.class
+srlibras-app/*.log
+srlibras-app/*.pyc
+srlibras-app/*.swp
+srlibras-app/.DS_Store
+srlibras-app/.atom/
+srlibras-app/.buildlog/
+srlibras-app/.history
+srlibras-app/.svn/
+
+# IntelliJ related
+srlibras-app/*.iml
+srlibras-app/*.ipr
+srlibras-app/*.iws
+srlibras-app/.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+srlibras-app/**/doc/api/
+srlibras-app/.dart_tool/
+srlibras-app/.flutter-plugins
+srlibras-app/.packages
+srlibras-app/.pub-cache/
+srlibras-app/.pub/
+srlibras-app/build/
+
+# Android related
+srlibras-app/**/android/**/gradle-wrapper.jar
+srlibras-app/**/android/.gradle
+srlibras-app/**/android/captures/
+srlibras-app/**/android/gradlew
+srlibras-app/**/android/gradlew.bat
+srlibras-app/**/android/local.properties
+srlibras-app/**/android/**/GeneratedPluginRegistrant.java
+
+# iOS/XCode related
+srlibras-app/**/ios/**/*.mode1v3
+srlibras-app/**/ios/**/*.mode2v3
+srlibras-app/**/ios/**/*.moved-aside
+srlibras-app/**/ios/**/*.pbxuser
+srlibras-app/**/ios/**/*.perspectivev3
+srlibras-app/**/ios/**/*sync/
+srlibras-app/**/ios/**/.sconsign.dblite
+srlibras-app/**/ios/**/.tags*
+srlibras-app/**/ios/**/.vagrant/
+srlibras-app/**/ios/**/DerivedData/
+srlibras-app/**/ios/**/Icon?
+srlibras-app/**/ios/**/Pods/
+srlibras-app/**/ios/**/.symlinks/
+srlibras-app/**/ios/**/profile
+srlibras-app/**/ios/**/xcuserdata
+srlibras-app/**/ios/.generated/
+srlibras-app/**/ios/Flutter/App.framework
+srlibras-app/**/ios/Flutter/Flutter.framework
+srlibras-app/**/ios/Flutter/Generated.xcconfig
+srlibras-app/**/ios/Flutter/app.flx
+srlibras-app/**/ios/Flutter/app.zip
+srlibras-app/**/ios/Flutter/flutter_assets/
+srlibras-app/**/ios/Flutter/flutter_export_environment.sh
+srlibras-app/**/ios/ServiceDefinitions.json
+srlibras-app/**/ios/Runner/GeneratedPluginRegistrant.*
+
+# Exceptions to above rules.
+srlibras-app/!**/ios/**/default.mode1v3
+srlibras-app/!**/ios/**/default.mode2v3
+srlibras-app/!**/ios/**/default.pbxuser
+srlibras-app/!**/ios/**/default.perspectivev3
+srlibras-app/!/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
