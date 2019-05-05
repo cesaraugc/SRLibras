@@ -3,6 +3,7 @@
 
 int16_t ax, ay, az, Tmp;
 int16_t gx, gy, gz;
+bool start = false;
 
 #define LED_PIN 13
 #define BIT0 2
@@ -10,14 +11,14 @@ int16_t gx, gy, gz;
 #define BIT2 4
 #define INH  12
 const int MPU=0x68;  // I2C address of the MPU-6050 This is valid only when AD0 is HIGH
+unsigned char incomingByte = '\0';
 
-
-SoftwareSerial bluetooth(5, 6); //TX, RX (Bluetooth)
+SoftwareSerial bluetooth(10, 11); //TX, RX (Bluetooth)
 
 void setup() {
 
   Serial.begin(9600);
-  bluetooth.begin(9600);  
+  bluetooth.begin(115200);  
 
   Serial.println("INICIALIZANDO...");
   pinMode(LED_PIN, OUTPUT);
@@ -38,17 +39,47 @@ void setup() {
 
   digitalWrite(INH, HIGH);
   Serial.println("FIM DA INICIALIZAÇÃO");
+  Serial.println("Obtendo os valores");
 }
 
 void loop() {
 
-  for(int i=0; i<5; i++){
-    setSensor(i);
-    delay(10);
-    readData();
-    printData();
-    delay(1000);
-  }; 
+  if(bluetooth.available()){
+    incomingByte = bluetooth.read();
+    if(incomingByte == 'a'){
+      start = true;
+      Serial.println("OK");
+    }
+  }
+  if(start){
+    for(int i=0; i<5; i++){
+      setSensor(i);
+      delay(10);
+      readData();
+      Serial.println(ax);
+      bluetooth.print(ax); bluetooth.print(",");
+      Serial.println(ay);
+      bluetooth.print(ay); bluetooth.print(",");
+      Serial.println(az);
+      bluetooth.print(az); bluetooth.print(",");
+      Serial.println(gx);
+      bluetooth.print(gx); bluetooth.print(",");
+      Serial.println(gy);
+      bluetooth.print(gy); bluetooth.print(",");
+      Serial.println(gz);
+      bluetooth.print(gz); bluetooth.println(",");
+      delay(1000);
+    }
+  }
+
+  //  for(int i=0; i<5; i++){
+//    setSensor(i);
+//    delay(10);
+//    readData();
+//    printData();
+//    delay(1000);
+//  }; 
+
 }
 
 void setSensor(int num){
@@ -56,7 +87,7 @@ void setSensor(int num){
   if(num == 0){
     digitalWrite(INH, LOW);
     Serial.println("Setando 0");
-    bluetooth.println("Setando 0");
+    //bluetooth.println("Setando 0");
     digitalWrite(BIT0, LOW);
     digitalWrite(BIT1, LOW);
     digitalWrite(BIT2, LOW);
@@ -65,7 +96,7 @@ void setSensor(int num){
   else if(num == 1){
     digitalWrite(INH, LOW);
     Serial.println("Setando 1");
-    bluetooth.println("Setando 1");
+//    bluetooth.println("Setando 1");
     digitalWrite(BIT0, HIGH);
     digitalWrite(BIT1, LOW);
     digitalWrite(BIT2, LOW);
@@ -74,7 +105,7 @@ void setSensor(int num){
   else if(num == 2){
     digitalWrite(INH, LOW);
     Serial.println("Setando 2");
-    bluetooth.println("Setando 2");
+//    bluetooth.println("Setando 2");
     digitalWrite(BIT0, LOW);
     digitalWrite(BIT1, HIGH);
     digitalWrite(BIT2, LOW);
@@ -83,7 +114,7 @@ void setSensor(int num){
   else if(num == 3){
     digitalWrite(INH, LOW);
     Serial.println("Setando 3");
-    bluetooth.println("Setando 3");
+//    bluetooth.println("Setando 3");
     digitalWrite(BIT0, HIGH);
     digitalWrite(BIT1, HIGH);
     digitalWrite(BIT2, LOW);
@@ -92,7 +123,7 @@ void setSensor(int num){
   else if(num == 4){
     digitalWrite(INH, LOW);
     Serial.println("Setando 4");
-    bluetooth.println("Setando 4");
+//    bluetooth.println("Setando 4");
     digitalWrite(BIT0, LOW);
     digitalWrite(BIT1, LOW);
     digitalWrite(BIT2, HIGH);
@@ -101,7 +132,7 @@ void setSensor(int num){
   else if(num == 5){
     digitalWrite(INH, LOW);
     Serial.println("Setando 5");
-    bluetooth.println("Setando 5");
+//    bluetooth.println("Setando 5");
     digitalWrite(BIT0, HIGH);
     digitalWrite(BIT1, LOW);
     digitalWrite(BIT2, HIGH);
@@ -110,7 +141,7 @@ void setSensor(int num){
   else if(num == 6){
     digitalWrite(INH, LOW);
     Serial.println("Setando 6");
-    bluetooth.println("Setando 6");
+//    bluetooth.println("Setando 6");
     digitalWrite(BIT0, LOW);
     digitalWrite(BIT1, HIGH);
     digitalWrite(BIT2, HIGH);
@@ -119,7 +150,7 @@ void setSensor(int num){
   else if(num == 7){
     digitalWrite(INH, LOW);
     Serial.println("Setando 7");
-    bluetooth.println("Setando 7");
+//    bluetooth.println("Setando 7");
     digitalWrite(BIT0, HIGH);
     digitalWrite(BIT1, HIGH);
     digitalWrite(BIT2, HIGH);
@@ -144,7 +175,8 @@ void readData(){
 
 void printData(){
   Serial.print("AcX = "); Serial.print(ax);
-  bluetooth.print("Acel. X = "); bluetooth.print(ax);
+  bluetooth.print("Acel. X = "); //bluetooth.print(ax);
+  bluetooth.write(ax);
   Serial.print(" | AcY = "); Serial.print(ay);
   bluetooth.print(" | Y = "); bluetooth.print(ay);
   Serial.print(" | AcZ = "); Serial.print(az);
