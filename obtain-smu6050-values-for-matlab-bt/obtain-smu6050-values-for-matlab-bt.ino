@@ -38,9 +38,7 @@ void setup() {
   delay(1000);
 
   digitalWrite(INH, HIGH);
-  Serial.println("FIM DA INICIALIZAÇÃO");
-  Serial.println("Obtendo os valores");
-}
+  Serial.println("FIM DA INICIALIZAÇÃO");}
 
 void loop() {
 
@@ -54,7 +52,7 @@ void loop() {
   if(start){
     for(int i=0; i<5; i++){
       setSensor(i);
-      delay(10);
+      delay(1);
       readData();
       Serial.println(ax);
       bluetooth.print(ax); bluetooth.print(",");
@@ -68,7 +66,7 @@ void loop() {
       bluetooth.print(gy); bluetooth.print(",");
       Serial.println(gz);
       bluetooth.print(gz); bluetooth.println(",");
-      delay(1000);
+//      delay(1000);
     }
   }
 
