@@ -3,8 +3,8 @@ if exist('bt','var') == true
 end
 
 %create a bluetooth object
-%HC-05 channel default is 1
-bt = Bluetooth('HC-05',1);
+%channel default is 1
+bt = Bluetooth('ESP32test',1);
 fopen(bt);
 disp("Bluetooth conectado!");
 
@@ -24,48 +24,48 @@ while(true)
 %         disp(x);
 
         x=scanstr(bt, ',');
-        vector_data = reshape(cell2mat(x),1,[]); % converte matriz de 1 dimensão para array
+        vector_data = reshape(cell2mat(x),1,[]); % converte matriz de 1 dimensï¿½o para array
         sensor1 = [vector_data; sensor1(1:99,:)];
-%         subplot(3,2,1);
-%         plot(sensor1);
-% %         legend('ax','ay','az','gx','gy','gz');
-%         title('Sensor 1');
+        subplot(3,2,1);
+        plot(sensor1);
+%         legend('ax','ay','az','gx','gy','gz');
+        title('Sensor 1');
 
         x=scanstr(bt, ',');
-        vector_data = reshape(cell2mat(x),1,[]); % converte matriz de 1 dimensão para array
+        vector_data = reshape(cell2mat(x),1,[]); % converte matriz de 1 dimensï¿½o para array
 %         sensor2= [sensor2; vector_data]
         sensor2 = [vector_data; sensor2(1:99,:)];
-%         subplot(3,2,2);
-%         plot(sensor2);
-% %         legend('ax','ay','az','gx','gy','gz');
-%         title('Sensor 2');
+        subplot(3,2,2);
+        plot(sensor2);
+%         legend('ax','ay','az','gx','gy','gz');
+        title('Sensor 2');
 
         x=scanstr(bt, ',');
-        vector_data = reshape(cell2mat(x),1,[]); % converte matriz de 1 dimensão para array
+        vector_data = reshape(cell2mat(x),1,[]); % converte matriz de 1 dimensï¿½o para array
         sensor3= [vector_data; sensor3(1:99,:)];
-%         subplot(3,2,3);
-%         plot(sensor3);
-% %         legend('ax','ay','az','gx','gy','gz');
-%         title('Sensor 3');
+        subplot(3,2,3);
+        plot(sensor3);
+%         legend('ax','ay','az','gx','gy','gz');
+        title('Sensor 3');
 
         x=scanstr(bt, ',');
-        vector_data = reshape(cell2mat(x),1,[]); % converte matriz de 1 dimensão para array
+        vector_data = reshape(cell2mat(x),1,[]); % converte matriz de 1 dimensï¿½o para array
         sensor4= [vector_data;sensor4(1:99,:)];
         subplot(3,2,4);
         plot(sensor4);
 %         legend('ax','ay','az','gx','gy','gz');
-%         title('Sensor 4');
+        title('Sensor 4');
 
         x=scanstr(bt, ',');
-        vector_data = reshape(cell2mat(x),1,[]); % converte matriz de 1 dimensão para array
+        vector_data = reshape(cell2mat(x),1,[]); % converte matriz de 1 dimensï¿½o para array
         sensor5= [vector_data; sensor5(1:99,:)];
-%         subplot(3,2,5);
-%         plot(sensor5);
-% %         legend('ax','ay','az','gx','gy','gz');
-%         title('Sensor 5');
+        subplot(3,2,5);
+        plot(sensor5);
+%         legend('ax','ay','az','gx','gy','gz');
+        title('Sensor 5');
 
         drawnow
-       
+        
     end
 end
 fclose(bt);

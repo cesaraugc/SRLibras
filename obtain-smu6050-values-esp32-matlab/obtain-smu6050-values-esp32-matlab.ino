@@ -9,6 +9,8 @@ BluetoothSerial bluetooth;
 
 int16_t ax, ay, az, Tmp;
 int16_t gx, gy, gz;
+bool start = false;
+unsigned char incomingByte = '\0';
 
 const int MPU=0x69;  // I2C address of the MPU-6050 This is valid only when AD0 is HIGH
 #define SENSOR0 19
@@ -19,7 +21,7 @@ const int MPU=0x69;  // I2C address of the MPU-6050 This is valid only when AD0 
 
 void setup() {
 
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   bluetooth.begin("ESP32test"); //Bluetooth device name
   Serial.println("The device started, now you can pair it with bluetooth!");
@@ -49,11 +51,35 @@ void setup() {
 }
 
 void loop() {
-  for(int i=0; i<5; i++){
-    setSensor(i);
-    readData();
-    printData();
-    delay(1000);
+
+  if(bluetooth.available()){
+    incomingByte = bluetooth.read();
+    if(incomingByte == 'a'){
+      start = true;
+      Serial.println("OK");
+    }
+  }
+
+  if(start){
+    for(int i=0; i<5; i++){
+      setSensor(i);
+      delay(1);
+      readData();
+      //printData();
+      Serial.println(ax);
+      bluetooth.print(ax); bluetooth.print(",");
+      Serial.println(ay);
+      bluetooth.print(ay); bluetooth.print(",");
+      Serial.println(az);
+      bluetooth.print(az); bluetooth.print(",");
+      Serial.println(gx);
+      bluetooth.print(gx); bluetooth.print(",");
+      Serial.println(gy);
+      bluetooth.print(gy); bluetooth.print(",");
+      Serial.println(gz);
+      bluetooth.print(gz); bluetooth.println(",");
+      //delay(1000);
+    }
   }
 }
 
@@ -61,7 +87,7 @@ void setSensor(int num){
   
   if(num == 0){
     Serial.println("Setando 0");
-    bluetooth.println("Setando 0");
+    // bluetooth.println("Setando 0");
     digitalWrite(SENSOR0, HIGH);
     digitalWrite(SENSOR1, LOW);
     digitalWrite(SENSOR2, LOW);
@@ -70,7 +96,7 @@ void setSensor(int num){
   }
   else if(num == 1){
     Serial.println("Setando 1");
-    bluetooth.println("Setando 1");
+    // bluetooth.println("Setando 1");
     digitalWrite(SENSOR0, LOW);
     digitalWrite(SENSOR1, HIGH);
     digitalWrite(SENSOR2, LOW);
@@ -79,7 +105,7 @@ void setSensor(int num){
   }
   else if(num == 2){
     Serial.println("Setando 2");
-    bluetooth.println("Setando 2");
+    // bluetooth.println("Setando 2");
     digitalWrite(SENSOR0, LOW);
     digitalWrite(SENSOR1, LOW);
     digitalWrite(SENSOR2, HIGH);
@@ -88,7 +114,7 @@ void setSensor(int num){
   }
   else if(num == 3){
     Serial.println("Setando 3");
-    bluetooth.println("Setando 3");
+    // bluetooth.println("Setando 3");
     digitalWrite(SENSOR0, LOW);
     digitalWrite(SENSOR1, LOW);
     digitalWrite(SENSOR2, LOW);
@@ -97,7 +123,7 @@ void setSensor(int num){
   }
   else if(num == 4){
     Serial.println("Setando 4");
-    bluetooth.println("Setando 4");
+    // bluetooth.println("Setando 4");
     digitalWrite(SENSOR0, LOW);
     digitalWrite(SENSOR1, LOW);
     digitalWrite(SENSOR2, LOW);
