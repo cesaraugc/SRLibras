@@ -22,9 +22,9 @@ while(true)
     
     fprintf(bt, '%c', '0');
     while(true)
-        if(bt.BytesAvailable > 0)
-            disp(num2str(bt.BytesAvailable));
-        end
+%         if(bt.BytesAvailable > 0)
+%             disp(num2str(bt.BytesAvailable));
+%         end
         if(bt.BytesAvailable == 12)
             x=fread(bt,6,'int16'); % recebe 6 dados
             vector_data = reshape(x,[],6); % converte matriz de 1 dimens�o para array
@@ -43,9 +43,9 @@ while(true)
 
     fprintf(bt, '%c', '1');
     while(true)
-        if(bt.BytesAvailable > 0)
-            disp(num2str(bt.BytesAvailable));
-        end
+%         if(bt.BytesAvailable > 0)
+%             disp(num2str(bt.BytesAvailable));
+%         end
         if(bt.BytesAvailable == 12)
             x=fread(bt,6,'int16'); % recebe 6 dados
             vector_data = reshape(x,[],6); % converte matriz de 1 dimens�o para array
@@ -64,9 +64,9 @@ while(true)
 
     fprintf(bt, '%c', '2');
     while(true)
-        if(bt.BytesAvailable > 0)
-            disp(num2str(bt.BytesAvailable));
-        end
+%         if(bt.BytesAvailable > 0)
+%             disp(num2str(bt.BytesAvailable));
+%         end
         if(bt.BytesAvailable == 12)
             x=fread(bt,6,'int16'); % recebe 6 dados
             vector_data = reshape(x,[],6); % converte matriz de 1 dimens�o para array
@@ -85,9 +85,9 @@ while(true)
 
     fprintf(bt, '%c', '3');
     while(true)
-        if(bt.BytesAvailable > 0)
-            disp(num2str(bt.BytesAvailable));
-        end
+%         if(bt.BytesAvailable > 0)
+%             disp(num2str(bt.BytesAvailable));
+%         end
         if(bt.BytesAvailable == 12)
             x=fread(bt,6,'int16'); % recebe 6 dados
             vector_data = reshape(x,[],6); % converte matriz de 1 dimens�o para array
@@ -106,9 +106,9 @@ while(true)
 
     fprintf(bt, '%c', '4');
     while(true)
-        if(bt.BytesAvailable > 0)
-            disp(num2str(bt.BytesAvailable));
-        end
+%         if(bt.BytesAvailable > 0)
+%             disp(num2str(bt.BytesAvailable));
+%         end
         if(bt.BytesAvailable == 12)
             x=fread(bt,6,'int16'); % recebe 6 dados
             vector_data = reshape(x,[],6); % converte matriz de 1 dimens�o para array
