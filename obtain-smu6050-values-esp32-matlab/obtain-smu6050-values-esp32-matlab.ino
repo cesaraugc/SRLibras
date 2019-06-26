@@ -9,8 +9,12 @@ BluetoothSerial bluetooth;
 
 int16_t ax, ay, az, Tmp;
 int16_t gx, gy, gz;
+uint16_t dado[2];
 bool start = false;
 unsigned char incomingByte = '\0';
+unsigned char incByte = 0;
+// unsigned long tempo;
+// unsigned long piorTempo = 0;
 
 const int MPU=0x69;  // I2C address of the MPU-6050 This is valid only when AD0 is HIGH
 #define SENSOR0 19
@@ -52,33 +56,38 @@ void setup() {
 
 void loop() {
 
+  // Serial.print("available" ); Serial.println(bluetooth.available());
   if(bluetooth.available()){
-    incomingByte = bluetooth.read();
-    if(incomingByte == 'a'){
-      start = true;
-      Serial.println("OK");
-    }
-  }
-
-  if(start){
-    for(int i=0; i<5; i++){
-      setSensor(i);
-      delay(1);
+    incByte = bluetooth.read();
+    if(incByte != 0){
+      uint8_t num = incByte - '0'; // converte char para número
+      Serial.println(num);
+      setSensor(num);
       readData();
-      //printData();
-      Serial.println(ax);
-      bluetooth.print(ax); bluetooth.print(",");
-      Serial.println(ay);
-      bluetooth.print(ay); bluetooth.print(",");
-      Serial.println(az);
-      bluetooth.print(az); bluetooth.print(",");
-      Serial.println(gx);
-      bluetooth.print(gx); bluetooth.print(",");
-      Serial.println(gy);
-      bluetooth.print(gy); bluetooth.print(",");
-      Serial.println(gz);
-      bluetooth.print(gz); bluetooth.println(",");
-      //delay(1000);
+
+      Serial.print("ax: "); Serial.println(ax);
+      Serial.print("ay: "); Serial.println(ay);
+      Serial.print("az: "); Serial.println(az);
+      Serial.print("gx: "); Serial.println(gx);
+      Serial.print("gy: "); Serial.println(gy);
+      Serial.print("gz: "); Serial.println(gz);
+
+      // Separa cada dado de 16 bits em 2 bytes para enviá-los 
+      // separadamente pela função write, que só escreve 1 byte
+      dado[0] = ax & 0xff; dado[1] = ax >> 8;
+      bluetooth.write(dado[0]); bluetooth.write(dado[1]);
+      dado[0] = ay & 0xff; dado[1] = ay >> 8;
+      bluetooth.write(dado[0]); bluetooth.write(dado[1]);
+      dado[0] = az & 0xff; dado[1] = az >> 8;
+      bluetooth.write(dado[0]); bluetooth.write(dado[1]);
+      dado[0] = gx & 0xff; dado[1] = gx >> 8;
+      bluetooth.write(dado[0]); bluetooth.write(dado[1]);
+      dado[0] = gy & 0xff; dado[1] = gy >> 8;
+      bluetooth.write(dado[0]); bluetooth.write(dado[1]);
+      dado[0] = gz & 0xff; dado[1] = gz >> 8;
+      bluetooth.write(dado[0]); bluetooth.write(dado[1]);
+
+      incByte = 0;
     }
   }
 }
@@ -86,7 +95,7 @@ void loop() {
 void setSensor(int num){
   
   if(num == 0){
-    Serial.println("Setando 0");
+    // Serial.println("Setando 0");
     // bluetooth.println("Setando 0");
     digitalWrite(SENSOR0, HIGH);
     digitalWrite(SENSOR1, LOW);
@@ -95,7 +104,7 @@ void setSensor(int num){
     digitalWrite(SENSOR4, LOW);
   }
   else if(num == 1){
-    Serial.println("Setando 1");
+    // Serial.println("Setando 1");
     // bluetooth.println("Setando 1");
     digitalWrite(SENSOR0, LOW);
     digitalWrite(SENSOR1, HIGH);
@@ -104,7 +113,7 @@ void setSensor(int num){
     digitalWrite(SENSOR4, LOW);
   }
   else if(num == 2){
-    Serial.println("Setando 2");
+    // Serial.println("Setando 2");
     // bluetooth.println("Setando 2");
     digitalWrite(SENSOR0, LOW);
     digitalWrite(SENSOR1, LOW);
@@ -113,7 +122,7 @@ void setSensor(int num){
     digitalWrite(SENSOR4, LOW);
   }
   else if(num == 3){
-    Serial.println("Setando 3");
+    // Serial.println("Setando 3");
     // bluetooth.println("Setando 3");
     digitalWrite(SENSOR0, LOW);
     digitalWrite(SENSOR1, LOW);
@@ -122,7 +131,7 @@ void setSensor(int num){
     digitalWrite(SENSOR4, LOW);
   }
   else if(num == 4){
-    Serial.println("Setando 4");
+    // Serial.println("Setando 4");
     // bluetooth.println("Setando 4");
     digitalWrite(SENSOR0, LOW);
     digitalWrite(SENSOR1, LOW);
@@ -148,19 +157,19 @@ void readData(){
 }
 
 void printData(){
-  Serial.print("AcX = "); Serial.print(ax);
+  // Serial.print("AcX = "); Serial.print(ax);
   bluetooth.print("Acel. X = "); bluetooth.print(ax);
-  Serial.print(" | AcY = "); Serial.print(ay);
+  // Serial.print(" | AcY = "); Serial.print(ay);
   bluetooth.print(" | Y = "); bluetooth.print(ay);
-  Serial.print(" | AcZ = "); Serial.print(az);
+  // Serial.print(" | AcZ = "); Serial.print(az);
   bluetooth.print(" | Z = "); bluetooth.print(az);
   //Serial.print(" | Tmp = "); Serial.print(Tmp/340.00+36.53);  //equation for temperature in degrees C from datasheet
-  Serial.print(" | GyX = "); Serial.print(gx);
+  // Serial.print(" | GyX = "); Serial.print(gx);
   bluetooth.print(" | Gir. X = "); bluetooth.print(gx);
-  Serial.print(" | GyY = "); Serial.print(gy);
+  // Serial.print(" | GyY = "); Serial.print(gy);
   bluetooth.print(" | Y = "); bluetooth.print(gy);
-  Serial.print(" | GyZ = "); Serial.println(gz);
+  // Serial.print(" | GyZ = "); Serial.println(gz);
   bluetooth.print(" | Z = "); bluetooth.println(gz);
-  Serial.println();
+  // Serial.println();
   bluetooth.println();
 }
