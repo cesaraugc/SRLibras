@@ -25,6 +25,7 @@ class _FirstView extends State<FirstView>{
   int _discoverableTimeoutSecondsLeft = 0;
 
   BackgroundCollectingTask _collectingTask;
+  BluetoothDevice selectedDevice;
 
   bool _autoAcceptPairingRequests = false;
 
@@ -140,7 +141,7 @@ class _FirstView extends State<FirstView>{
                     setState(() {/* Update for `_collectingTask.inProgress` */});
                   }
                   else {
-                    final BluetoothDevice selectedDevice = await Navigator.of(context).push(
+                    selectedDevice = await Navigator.of(context).push(
                       MaterialPageRoute(builder: (context) { return SelectBondedDevicePage(checkAvailability: false); })
                     );
 
@@ -166,6 +167,33 @@ class _FirstView extends State<FirstView>{
                   );
                 } : null,
               )
+            ),
+
+            ListTile(
+              title: RaisedButton(
+                child: (
+                  Text('Collect New Data.') 
+                ),
+                onPressed: () async {
+                  if (_collectingTask != null && _collectingTask.inProgress) {
+                    while(true){
+                    try{
+                      _collectingTask.reasume();
+                      //var data = _collectingTask.getData();
+                      var connection = _collectingTask.getConnection();
+                      
+                      connection.input.listen((data) {
+                        print("AQUI");
+                        print(data);
+                      }).onDone(() {});
+                      //print(data);
+                    } catch (exception) {
+                      print('Cannot connect, exception occured');
+                    }
+                    }
+                  }
+                },
+              ),
             ),
             
           ],

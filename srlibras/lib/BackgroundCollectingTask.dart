@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -23,34 +24,23 @@ class BackgroundCollectingTask extends Model
   // @TODO , Such sample collection in real code should be delegated 
   // (via `Stream<DataSample>` preferably) and then saved for later
   // displaying on chart (or even stright prepare for displaying).
-  List<DataSample> samples = List<DataSample>(); // @TODO ? should be shrinked at some point, endless colleting data would cause memory shortage.
-
+  var samples = List<DataSample>(); // @TODO ? should be shrinked at some point, endless colleting data would cause memory shortage.
+  
+  var simpleSamples = List<int>(); 
+  int num_elements = 0;
   bool inProgress;
 
   BackgroundCollectingTask._fromConnection(this._connection) {
+    final first_time = DateTime.now();
     _connection.input.listen((data) {
-      _buffer += data;
-
-      while (true) {
-        // If there is a sample, and it is full sent
-        int index = _buffer.indexOf('t'.codeUnitAt(0));
-        if (index >= 0 && _buffer.length - index >= 7) {
-          final DataSample sample = DataSample(
-            temperature1: (_buffer[index + 1] + _buffer[index + 2] / 100),
-            temperature2: (_buffer[index + 3] + _buffer[index + 4] / 100),
-            waterpHlevel: (_buffer[index + 5] + _buffer[index + 6] / 100),
-            timestamp: DateTime.now()
-          );
-          _buffer.removeRange(0, index + 7);
-
-          samples.add(sample);
-          notifyListeners(); // Note: It shouldn't be invoked very often - in this example data comes at every second, but if there would be more data, it should update (including repaint of graphs) in some fixed interval instead of after every sample.
-          //print("${sample.timestamp.toString()} -> ${sample.temperature1} / ${sample.temperature2}");
-        }
-        // Otherwise break
-        else {
-          break;
-        }
+      for(int i=0; i<data.length; i++){
+        simpleSamples.add(data[i]);
+      }
+      if(simpleSamples.length == 30){
+        print(simpleSamples);
+        final cur_time = DateTime.now();
+        print("time: " + cur_time.difference(first_time).inMilliseconds.toString() + " ms.");
+        notifyListeners();
       }
     }).onDone(() {
       inProgress = false;
@@ -63,6 +53,25 @@ class BackgroundCollectingTask extends Model
     return BackgroundCollectingTask._fromConnection(connection);
   }
 
+  BluetoothConnection getConnection(){
+    return this._connection;
+  }
+
+  Future<Uint8List> getData(){
+    _connection.input.listen((data) {
+      for(int i=0; i<data.length; i++){
+        simpleSamples.add(data[i]);
+      }
+      if(simpleSamples.length == 30){
+        print(simpleSamples);
+        notifyListeners();
+      }
+    }).onDone(() {
+      inProgress = false;
+      notifyListeners();
+    });
+  }
+
   void dispose() {
     _connection.dispose();
   }
@@ -72,7 +81,7 @@ class BackgroundCollectingTask extends Model
     _buffer.clear();
     samples.clear();
     notifyListeners();
-    _connection.output.add(ascii.encode('start'));
+    _connection.output.add(ascii.encode('a'));
     await _connection.output.allSent;
   }
 
@@ -93,7 +102,7 @@ class BackgroundCollectingTask extends Model
   Future<void> reasume() async {
     inProgress = true;
     notifyListeners();
-    _connection.output.add(ascii.encode('start'));
+    _connection.output.add(ascii.encode('a'));
     await _connection.output.allSent;
   }
 
