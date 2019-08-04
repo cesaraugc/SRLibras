@@ -13,6 +13,7 @@ uint16_t dado[2];
 bool start = false;
 unsigned char incomingByte = '\0';
 unsigned char incByte = 0;
+uint8_t num;
 // unsigned long tempo;
 // unsigned long piorTempo = 0;
 
@@ -60,32 +61,67 @@ void loop() {
   if(bluetooth.available()){
     incByte = bluetooth.read();
     if(incByte != 0){
-      uint8_t num = incByte - '0'; // converte char para número
-      Serial.println(num);
-      setSensor(num);
-      readData();
 
-      Serial.print("ax: "); Serial.println(ax);
-      Serial.print("ay: "); Serial.println(ay);
-      Serial.print("az: "); Serial.println(az);
-      Serial.print("gx: "); Serial.println(gx);
-      Serial.print("gy: "); Serial.println(gy);
-      Serial.print("gz: "); Serial.println(gz);
+      // Comandos '0', '1', '2', '3' e '4' pegam os valores dos respectivos sensores
+      if(incByte >= '0' && incByte <= '4'){
+        num = incByte - '0'; // converte char para número
+        setSensor(num);
+        readData();
 
-      // Separa cada dado de 16 bits em 2 bytes para enviá-los 
-      // separadamente pela função write, que só escreve 1 byte
-      dado[0] = ax & 0xff; dado[1] = ax >> 8;
-      bluetooth.write(dado[0]); bluetooth.write(dado[1]);
-      dado[0] = ay & 0xff; dado[1] = ay >> 8;
-      bluetooth.write(dado[0]); bluetooth.write(dado[1]);
-      dado[0] = az & 0xff; dado[1] = az >> 8;
-      bluetooth.write(dado[0]); bluetooth.write(dado[1]);
-      dado[0] = gx & 0xff; dado[1] = gx >> 8;
-      bluetooth.write(dado[0]); bluetooth.write(dado[1]);
-      dado[0] = gy & 0xff; dado[1] = gy >> 8;
-      bluetooth.write(dado[0]); bluetooth.write(dado[1]);
-      dado[0] = gz & 0xff; dado[1] = gz >> 8;
-      bluetooth.write(dado[0]); bluetooth.write(dado[1]);
+//        Serial.println(num);
+//        Serial.print("ax: "); Serial.println(ax);
+//        Serial.print("ay: "); Serial.println(ay);
+//        Serial.print("az: "); Serial.println(az);
+//        Serial.print("gx: "); Serial.println(gx);
+//        Serial.print("gy: "); Serial.println(gy);
+//        Serial.print("gz: "); Serial.println(gz);
+
+        // Separa cada dado de 16 bits em 2 bytes para enviá-los 
+        // separadamente pela função write, que só escreve 1 byte
+        dado[0] = ax & 0xff; dado[1] = ax >> 8;
+        bluetooth.write(dado[0]); bluetooth.write(dado[1]);
+        dado[0] = ay & 0xff; dado[1] = ay >> 8;
+        bluetooth.write(dado[0]); bluetooth.write(dado[1]);
+        dado[0] = az & 0xff; dado[1] = az >> 8;
+        bluetooth.write(dado[0]); bluetooth.write(dado[1]);
+        dado[0] = gx & 0xff; dado[1] = gx >> 8;
+        bluetooth.write(dado[0]); bluetooth.write(dado[1]);
+        dado[0] = gy & 0xff; dado[1] = gy >> 8;
+        bluetooth.write(dado[0]); bluetooth.write(dado[1]);
+        dado[0] = gz & 0xff; dado[1] = gz >> 8;
+        bluetooth.write(dado[0]); bluetooth.write(dado[1]);
+      }
+
+      // Comando 't' para receber dados de Todos os 5 sensores
+      else if(incByte == 't'){
+        for(uint8_t j=0; j<5; j++){
+          setSensor(j);
+          readData();
+
+//          Serial.println(j);
+//          Serial.print("ax: "); Serial.println(ax);
+//          Serial.print("ay: "); Serial.println(ay);
+//          Serial.print("az: "); Serial.println(az);
+//          Serial.print("gx: "); Serial.println(gx);
+//          Serial.print("gy: "); Serial.println(gy);
+//          Serial.print("gz: "); Serial.println(gz);
+
+          // Separa cada dado de 16 bits em 2 bytes para enviá-los 
+          // separadamente pela função write, que só escreve 1 byte
+          dado[0] = ax & 0xff; dado[1] = ax >> 8;
+          bluetooth.write(dado[0]); bluetooth.write(dado[1]);
+          dado[0] = ay & 0xff; dado[1] = ay >> 8;
+          bluetooth.write(dado[0]); bluetooth.write(dado[1]);
+          dado[0] = az & 0xff; dado[1] = az >> 8;
+          bluetooth.write(dado[0]); bluetooth.write(dado[1]);
+          dado[0] = gx & 0xff; dado[1] = gx >> 8;
+          bluetooth.write(dado[0]); bluetooth.write(dado[1]);
+          dado[0] = gy & 0xff; dado[1] = gy >> 8;
+          bluetooth.write(dado[0]); bluetooth.write(dado[1]);
+          dado[0] = gz & 0xff; dado[1] = gz >> 8;
+          bluetooth.write(dado[0]); bluetooth.write(dado[1]);
+        }
+      }
 
       incByte = 0;
     }
@@ -153,7 +189,7 @@ void readData(){
   gx=Wire.read()<<8|Wire.read();  // 0x43 (GYRO_XOUT_H) & 0x44 (GYRO_XOUT_L)
   gy=Wire.read()<<8|Wire.read();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
   gz=Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
-  Wire.endTransmission(true);
+//  Wire.endTransmission(true);
 }
 
 void printData(){
