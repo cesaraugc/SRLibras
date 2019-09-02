@@ -11,7 +11,6 @@ int16_t ax, ay, az, Tmp;
 int16_t gx, gy, gz;
 uint16_t dado[2];
 bool start = false;
-unsigned char incomingByte = '\0';
 unsigned char incByte = 0;
 uint8_t num;
 // unsigned long tempo;
