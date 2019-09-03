@@ -171,7 +171,7 @@ class DeviceScreen extends StatelessWidget {
                         //if(c.uuid.toString() == "6e400002-b5a3-f393-e0a9-e50e24dcca9e"){
                         return CharacteristicTile(
                             characteristic: c,
-                            onReadPressed: (){  var a = c.read(); print(a); return a;},
+                            onReadPressed: () => c.read(),
                             onStartPressed: (){ 
                               MyDataSingleton mydata = MyDataSingleton(); 
                               mydata.clear(); 

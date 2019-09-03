@@ -8,8 +8,7 @@ import 'helper.dart';
 
 String UUID_READ = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
 String UUID_WRITE = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
-bool dados_recebidos = false;
-var write_characteristic;
+int num_dados = 0;
 
 class ScanResultTile extends StatelessWidget {
   const ScanResultTile({Key key, this.result, this.onTap}) : super(key: key);
@@ -178,22 +177,25 @@ class CharacteristicTile extends StatelessWidget {
         MyDataSingleton mydata = MyDataSingleton();
         if(uuid == UUID_READ ){
           // characteristic.setNotifyValue(true);
-          if(value.length == 20){
-            mydata.setData(value.toList());
-            print("Dados recebidos");
-            write_characteristic.write([66]);
-            print("Sinal de recebido enviado");
+          if(value.length == 60){
+            num_dados++;
+            print(value);
+            print("Dados recebidos: " + num_dados.toString());
+            for(int k=0;k<60; k+=2){
+              var combinado = (value[k+1]) << 8 | (value[k]);
+              print(combinado.toSigned(15));
+            }
           }
-        }
-
-        if(write_characteristic == null && uuid == UUID_WRITE){
-          write_characteristic = characteristic;
+          // if(value.length == 60){
+            // mydata.setData(value.toList());
+          // }
         }
 
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            /*
             uuid == UUID_READ && value.length>0?
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -212,6 +214,7 @@ class CharacteristicTile extends StatelessWidget {
                   Text(value.sublist(10,20).toString())
                 ],
               ) : Container(width: 0.0,height: 0.0),
+            */
             uuid == UUID_READ?
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -261,6 +264,7 @@ class CharacteristicTile extends StatelessWidget {
                   ),
                 ],
               ) : Container(width: 0.0,height: 0.0),
+            /*
             uuid == UUID_WRITE ? 
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -282,6 +286,7 @@ class CharacteristicTile extends StatelessWidget {
                       labelText: 'Nome do sinal',
                     ),
               ) : Container(width: 0.0,height: 0.0),
+            */
           ],
         );
       },
