@@ -716,6 +716,7 @@ public class FlutterBluePlugin implements MethodCallHandler, RequestPermissionsR
             }
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 gatt.requestMtu(512);
+                // gatt.requestMtu(63);
             }
             super.onConnectionStateChange(gatt, status, newState);
             invokeMethodUIThread("DeviceState", ProtoMaker.from(gatt.getDevice(), newState).toByteArray());
