@@ -5,10 +5,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'helper.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 String UUID_READ = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
 String UUID_WRITE = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
-int num_dados = 0;
+
 
 class ScanResultTile extends StatelessWidget {
   const ScanResultTile({Key key, this.result, this.onTap}) : super(key: key);
@@ -125,45 +126,12 @@ class ScanResultTile extends StatelessWidget {
   }
 }
 
-class ServiceTile extends StatelessWidget {
-  final BluetoothService service;
-  final List<CharacteristicTile> characteristicTiles;
-
-  const ServiceTile({Key key, this.service, this.characteristicTiles})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    if (characteristicTiles.length > 0 && 
-        service.uuid.toString().toUpperCase()=="6E400001-B5A3-F393-E0A9-E50E24DCCA9E") {
-      
-      return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: characteristicTiles,
-        );
-    } 
-    else{
-      return new Container(width: 0.0,height: 0.0);
-    }
-  }
-}
-
 class CharacteristicTile extends StatelessWidget {
   final BluetoothCharacteristic characteristic;
-  // final List<DescriptorTile> descriptorTiles;
-  final VoidCallback onReadPressed;
-  final VoidCallback onStartPressed;
-  final VoidCallback onStopPressed;
-  final VoidCallback onNotificationPressed;
 
   const CharacteristicTile(
       {Key key,
-      this.characteristic,
-      // this.descriptorTiles,
-      this.onReadPressed,
-      this.onStartPressed,
-      this.onNotificationPressed,
-      this.onStopPressed})
+      this.characteristic})
       : super(key: key);
 
   @override
@@ -175,21 +143,10 @@ class CharacteristicTile extends StatelessWidget {
         final value = snapshot.data;
         String uuid = characteristic.uuid.toString();
         MyDataSingleton mydata = MyDataSingleton();
-        if(uuid == UUID_READ ){
-          // characteristic.setNotifyValue(true);
-          print(value.length);
-          if(value.length > 0){
-            num_dados++;
-            // print(value);
-            print("Dados recebidos: " + num_dados.toString());
-            mydata.setData(value.toList());
-            // for(int k=0;k<60; k+=2){
-            //   var combinado = (value[k+1]) << 8 | (value[k]);
-            //   print(combinado.toSigned(15));
-            // }
-          }
+        if(uuid == UUID_READ && value.length > 0){
+          mydata.setData(value.toList());
         }
-
+        print(characteristic.uuid);
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           // crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,7 +183,9 @@ class CharacteristicTile extends StatelessWidget {
                   //     Icons.file_download,
                   //     color: Theme.of(context).iconTheme.color.withOpacity(0.5),
                   //   ),
-                  //   onPressed: onReadPressed,
+                  //   onPressed: (){
+                  //      c.read();
+                  //    },
                   // ),
                   IconButton(
                     iconSize: 70,
@@ -235,7 +194,9 @@ class CharacteristicTile extends StatelessWidget {
                             ? Icons.sync_disabled
                             : Icons.sync,
                         color: Theme.of(context).iconTheme.color.withOpacity(0.5)),
-                    onPressed: onNotificationPressed,
+                    onPressed: (){
+                      characteristic.setNotifyValue(!characteristic.isNotifying);
+                    },
                   )
                 ],
               ) : Container(width: 0.0,height: 0.0),
@@ -251,7 +212,10 @@ class CharacteristicTile extends StatelessWidget {
                       Icons.play_arrow,
                       color: Theme.of(context).iconTheme.color.withOpacity(0.5),
                     ),
-                    onPressed: onStartPressed,
+                    onPressed: (){
+                      mydata.clear(); 
+                      characteristic.write([83]);
+                    },
                   ),
                   IconButton(
                     iconSize: 70,
@@ -259,33 +223,12 @@ class CharacteristicTile extends StatelessWidget {
                       Icons.stop,
                       color: Theme.of(context).iconTheme.color.withOpacity(0.5),
                     ),
-                    onPressed: onStopPressed,
+                    onPressed: (){
+                      characteristic.write([80]);
+                    },
                   ),
                 ],
               ) : Container(width: 0.0,height: 0.0),
-            /*
-            uuid == UUID_WRITE ? 
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  IconButton(
-                    iconSize: 70,
-                    icon: Icon(Icons.save,
-                        color: Theme.of(context).iconTheme.color.withOpacity(0.5)),
-                    onPressed: () {},
-                  ),
-                ],
-              ) : Container(width: 0.0,height: 0.0),
-            uuid == UUID_WRITE ?
-              TextField(
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Nome do sinal',
-                    ),
-              ) : Container(width: 0.0,height: 0.0),
-            */
           ],
         );
       },

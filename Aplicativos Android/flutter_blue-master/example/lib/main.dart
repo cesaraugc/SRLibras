@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_blue_example/widgets.dart';
 import 'helper.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 void main() {
   runApp(FlutterBlueApp());
@@ -154,6 +155,7 @@ class FindDevicesScreen extends StatelessWidget {
   }
 }
 
+final myController = TextEditingController();
 class DeviceScreen extends StatelessWidget {
   const DeviceScreen({Key key, this.device}) : super(key: key);
 
@@ -161,41 +163,53 @@ class DeviceScreen extends StatelessWidget {
 
   List<Widget> _buildServiceTiles(List<BluetoothService> services) {
     print(device.name);
+    
     return services
         .map(
-          (s) => ServiceTile(
-                service: s,
-                characteristicTiles: s.characteristics
-                    .map(
-                      (c) { 
-                        //if(c.uuid.toString() == "6e400002-b5a3-f393-e0a9-e50e24dcca9e"){
-                        return CharacteristicTile(
-                            characteristic: c,
-                            onReadPressed: () => c.read(),
-                            onStartPressed: (){ 
-                              MyDataSingleton mydata = MyDataSingleton(); 
-                              mydata.clear(); 
-                              c.write([83]);
-                            },
-                            onStopPressed: (){ 
-                              c.write([80]);
-                            },
-                            onNotificationPressed: () =>
-                                c.setNotifyValue(!c.isNotifying)
-                            // descriptorTiles: c.descriptors
-                            //     .map(
-                            //       (d) => DescriptorTile(
-                            //             descriptor: d,
-                            //             onReadPressed: (){ var p = d.read(); print(p); return p;},
-                            //             onStartPressed: () => d.write([11, 12]),
-                            //           ),
-                            //     )
-                            //     .toList(),
+          (s) { 
+              return s.uuid.toString().toUpperCase()=="6E400001-B5A3-F393-E0A9-E50E24DCCA9E"?
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: 
+                      
+                                      s.characteristics.map(
+                                      (c) {
+                                        return CharacteristicTile(
+                                            characteristic: c
+                                        );
+                                      }
+                                    )
+                                    .toList(),
+                    ),
+                    TextField(
+                      controller: myController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Nome do sinal',
+                      ),
+                    ),
+                    IconButton(
+                      iconSize: 70,
+                      icon: Icon(Icons.save),
+                      onPressed: () {
+                        Fluttertoast.showToast(
+                            msg: myController.text,
+                            textColor: Colors.white,
+                            toastLength: Toast.LENGTH_SHORT,
+                            timeInSecForIos: 1,
+                            gravity: ToastGravity.BOTTOM,
+                            backgroundColor: Colors.indigo,
                         );
-                      }
-                    )
-                    .toList(),
-              ),
+                      },
+                    ),
+                  ]
+                ) 
+                : Container(width: 0.0,height: 0.0);
+          }
         )
         .toList();
   }

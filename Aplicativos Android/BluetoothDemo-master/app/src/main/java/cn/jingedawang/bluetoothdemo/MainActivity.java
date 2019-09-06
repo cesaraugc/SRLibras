@@ -1,5 +1,6 @@
 package cn.jingedawang.bluetoothdemo;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
@@ -32,6 +33,7 @@ public class MainActivity extends Activity {
     private BluetoothAdapter mBluetoothAdapter;
     private ConnectedThread mConnectedThread;
     List<Byte> valoresLidos = new ArrayList<Byte>();
+    byte[] stt_cmd = {(byte)97};
     long startTime;
     long endTime;
 
@@ -128,7 +130,7 @@ public class MainActivity extends Activity {
 
         // Quando um dispositivo Bluetooth está conectado, os dados são
         // recebidos e exibidos na caixa de texto da área de recepção
-        Handler handler = new Handler() {
+        @SuppressLint("HandlerLeak") Handler handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
@@ -144,10 +146,12 @@ public class MainActivity extends Activity {
 //                                edtReceivedMessage.getText().append(c);
 //                            }
                         }
-                        if(valoresLidos.size() % 30 == 0){
+                        if(valoresLidos.size() % 60 == 0){
                             endTime = System.nanoTime();
                             System.out.println("Li todos em " + (endTime-startTime)/1000000 + " ms.");
                             System.out.println(Arrays.toString(valoresLidos.toArray()));
+//                            mConnectedThread.write(stt_cmd);
+                            startTime = System.nanoTime();
                         }
                         break;
                 }

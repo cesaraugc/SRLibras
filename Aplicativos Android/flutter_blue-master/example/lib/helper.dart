@@ -6,10 +6,8 @@ class MyDataSingleton {
   }
   MyDataSingleton._internalConstructor();
 
-  int combinado=0, tempo=0, media=0, contador=0;
+  int combinado=0;
   List<List<int>> dadosRecebidos = new List<List<int>>();
-  Stopwatch stopwatch = new Stopwatch()..start();
-  List<int> tempos = new List<int>();
   
   void setData(List<int> data){
       // print(dadosRecebidos.last);
@@ -19,26 +17,15 @@ class MyDataSingleton {
       // }
       // Adiciona nova linha
       dadosRecebidos.add(data);
-
-      tempo = stopwatch.elapsedMilliseconds;
-      media += tempo;
-      tempos.add(tempo);
-      contador++;
-      print("Tempo: " + tempo.toString());
-      if(contador==100){
-        print("Média: " + (media/contador).toString());
-        print(tempos);
-      }
-      stopwatch..reset();
     
   }
 
   void clear(){
     dadosRecebidos = [[]];
-    contador = 0;
-    tempos = [];
-    media = 0;
-    tempo = 0;
+  }
+
+  void saveToFile(){
+    
   }
 
 
