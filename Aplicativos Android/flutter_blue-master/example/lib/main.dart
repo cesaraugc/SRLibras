@@ -3,12 +3,15 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:async';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:flutter_blue_example/widgets.dart';
+import 'package:SrLibras/widgets.dart';
 import 'helper.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path_provider/path_provider.dart';
+// import 'package:flutter_file_manager/flutter_file_manager.dart';
+// import 'package:simple_permissions/simple_permissions.dart';
 
 void main() {
   runApp(FlutterBlueApp());
@@ -70,6 +73,7 @@ class FindDevicesScreen extends StatelessWidget {
   const FindDevicesScreen({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    MyDataSingleton myData = MyDataSingleton();
     return Scaffold(
       appBar: AppBar(
         title: Text('Find Devices'),
@@ -98,10 +102,17 @@ class FindDevicesScreen extends StatelessWidget {
                                         BluetoothDeviceState.connected) {
                                       return RaisedButton(
                                         child: Text('OPEN'),
-                                        onPressed: () => Navigator.of(context)
-                                            .push(MaterialPageRoute(
+                                        onPressed: () { 
+                                          myData.clear();
+                                          print("vishhh");
+                                          return Navigator.of(context)
+                                            .push(
+                                              MaterialPageRoute(
                                                 builder: (context) =>
-                                                    DeviceScreen(device: d))),
+                                                    DeviceScreen(device: d, myData: myData,)
+                                              )
+                                            );
+                                        },
                                       );
                                     }
                                     return Text(snapshot.data.toString());
@@ -121,8 +132,9 @@ class FindDevicesScreen extends StatelessWidget {
                                   result: r,
                                   onTap: () => Navigator.of(context).push(
                                           MaterialPageRoute(builder: (context) {
-                                        r.device.connect();
-                                        return DeviceScreen(device: r.device);
+                                            r.device.connect();
+                                            r.device.discoverServices();
+                                            return DeviceScreen(device: r.device, myData: myData);
                                       })),
                                 ),
                           )
@@ -155,15 +167,17 @@ class FindDevicesScreen extends StatelessWidget {
   }
 }
 
-final myController = TextEditingController();
+final textController = TextEditingController();
+// MyDataSingleton myData = MyDataSingleton();
 class DeviceScreen extends StatelessWidget {
-  const DeviceScreen({Key key, this.device}) : super(key: key);
+  const DeviceScreen({Key key, this.device, this.myData //this.textController
+                      }) : super(key: key);
 
   final BluetoothDevice device;
+  final MyDataSingleton myData;
 
   List<Widget> _buildServiceTiles(List<BluetoothService> services) {
     print(device.name);
-    
     return services
         .map(
           (s) { 
@@ -175,18 +189,18 @@ class DeviceScreen extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: 
-                      
-                                      s.characteristics.map(
-                                      (c) {
-                                        return CharacteristicTile(
-                                            characteristic: c
-                                        );
-                                      }
-                                    )
-                                    .toList(),
+                        s.characteristics.map(
+                          (c) {
+                            return CharacteristicTile2(
+                                characteristic: c,
+                                myData:myData
+                            );
+                          }
+                        )
+                        .toList(),
                     ),
                     TextField(
-                      controller: myController,
+                      controller: textController,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Nome do sinal',
@@ -196,14 +210,7 @@ class DeviceScreen extends StatelessWidget {
                       iconSize: 70,
                       icon: Icon(Icons.save),
                       onPressed: () {
-                        Fluttertoast.showToast(
-                            msg: myController.text,
-                            textColor: Colors.white,
-                            toastLength: Toast.LENGTH_SHORT,
-                            timeInSecForIos: 1,
-                            gravity: ToastGravity.BOTTOM,
-                            backgroundColor: Colors.indigo,
-                        );
+                        myData.saveToFile(textController.text);
                       },
                     ),
                   ]
@@ -296,7 +303,6 @@ class DeviceScreen extends StatelessWidget {
               stream: device.services,
               initialData: [],
               builder: (c, snapshot) {
-                // device.discoverServices();
                 return Column(
                   children: _buildServiceTiles(snapshot.data),
                 );

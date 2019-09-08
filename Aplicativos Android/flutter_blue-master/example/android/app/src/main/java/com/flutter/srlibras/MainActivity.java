@@ -1,4 +1,4 @@
-package com.pauldemarco.flutterblueexample;
+package com.flutter.srlibras;
 
 import android.os.Bundle;
 

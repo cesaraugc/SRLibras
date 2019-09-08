@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'helper.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'dart:async';
 
 String UUID_READ = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
 String UUID_WRITE = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
@@ -126,13 +127,37 @@ class ScanResultTile extends StatelessWidget {
   }
 }
 
-class CharacteristicTile extends StatelessWidget {
-  final BluetoothCharacteristic characteristic;
 
-  const CharacteristicTile(
+class CharacteristicTile2 extends StatefulWidget {
+  final BluetoothCharacteristic characteristic;
+  final MyDataSingleton myData;
+
+  const CharacteristicTile2(
       {Key key,
-      this.characteristic})
-      : super(key: key);
+      this.characteristic,
+      this.myData});
+
+  @override
+  _CharacteristicTile2State createState() => new _CharacteristicTile2State(
+    characteristic: characteristic,
+    myData:myData
+  );
+}
+
+
+class _CharacteristicTile2State extends State<CharacteristicTile2> {
+  final BluetoothCharacteristic characteristic;
+  final MyDataSingleton myData;
+
+  _CharacteristicTile2State(
+      {Key key,
+      this.characteristic,
+      this.myData});
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -142,51 +167,22 @@ class CharacteristicTile extends StatelessWidget {
       builder: (c, snapshot) {
         final value = snapshot.data;
         String uuid = characteristic.uuid.toString();
-        MyDataSingleton mydata = MyDataSingleton();
+        // MyDataSingleton myData = MyDataSingleton();
         if(uuid == UUID_READ && value.length > 0){
-          mydata.setData(value.toList());
+          myData.setData(value.toList());
         }
-        print(characteristic.uuid);
+        
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            /*
-            uuid == UUID_READ && value.length>0?
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                // crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(value.sublist(0,10).toString()),
-                ],
-              ) : Container(width: 0.0,height: 0.0),
-            uuid == UUID_READ && value.length>0?
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                // crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(value.sublist(10,20).toString())
-                ],
-              ) : Container(width: 0.0,height: 0.0),
-            */
+
             uuid == UUID_READ?
               Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 // crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  // IconButton(
-                  //   iconSize: 70,
-                  //   icon: Icon(
-                  //     Icons.file_download,
-                  //     color: Theme.of(context).iconTheme.color.withOpacity(0.5),
-                  //   ),
-                  //   onPressed: (){
-                  //      c.read();
-                  //    },
-                  // ),
                   IconButton(
                     iconSize: 70,
                     icon: Icon(
@@ -200,41 +196,72 @@ class CharacteristicTile extends StatelessWidget {
                   )
                 ],
               ) : Container(width: 0.0,height: 0.0),
+
+            
+            
             uuid == UUID_WRITE?
               Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
-                // crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  IconButton(
-                    iconSize: 70,
-                    icon: Icon(
-                      Icons.play_arrow,
-                      color: Theme.of(context).iconTheme.color.withOpacity(0.5),
-                    ),
-                    onPressed: (){
-                      mydata.clear(); 
-                      characteristic.write([83]);
-                    },
+                  StreamBuilder<bool>(
+                    stream: myData.canReceive,
+                    initialData: true,
+                    builder: (c, snapshot) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            _buildButtons(snapshot.data),
+                          ]
+                        );
+                      }
                   ),
-                  IconButton(
-                    iconSize: 70,
-                    icon: Icon(
-                      Icons.stop,
-                      color: Theme.of(context).iconTheme.color.withOpacity(0.5),
-                    ),
-                    onPressed: (){
-                      characteristic.write([80]);
-                    },
-                  ),
-                ],
+
+                  StreamBuilder<int>(
+                    stream: myData.numRcv,
+                    initialData: 0,
+                    builder: (c, snapshot) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Text(snapshot.data.toString())
+                          ]
+                        );
+                      }
+                  )
+                ]
               ) : Container(width: 0.0,height: 0.0),
+            
           ],
         );
       },
     );
   }
+
+  Widget _buildButtons(podeReceber) {
+    return new IconButton(
+        iconSize: 70,
+        icon: podeReceber?
+          Icon(
+            Icons.play_arrow,
+            color: Theme.of(context).iconTheme.color.withOpacity(0.5),
+          ) :
+          SizedBox(
+            child: CircularProgressIndicator(
+              valueColor:
+              AlwaysStoppedAnimation(Colors.grey),
+            ),
+          ),
+        onPressed: podeReceber?
+          (){
+            myData.clear(); 
+            characteristic.write([83]);
+            myData.setReceive(false);
+          } : null
+    );
+  }
 }
+
 
 class AdapterStateTile extends StatelessWidget {
   const AdapterStateTile({Key key, @required this.state}) : super(key: key);
