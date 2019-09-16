@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:SrLibras/widgets.dart';
 import 'package:rxdart/rxdart.dart';
+import 'dart:math';
 
 class MyDataSingleton {
   static MyDataSingleton _instance;
@@ -37,9 +38,10 @@ class MyDataSingleton {
     print(dadosRecebidos.length);
     _numRcv.add(dadosRecebidos.length);
     if(dadosRecebidos.length == 100){
+      error = allZero();
+      print(error?"Recebido com erros!":"Recebido");
       podeReceber=true;
       _canReceive.add(true);
-      print("Recebido!");
     }
     if(dadosRecebidos.length > 100){
       error=true;
@@ -47,8 +49,10 @@ class MyDataSingleton {
   }
 
   void clear(){
+    error=false;
     dadosRecebidos = new List<List<int>>();
     _canReceive.add(true);
+    _numRcv.add(0);
   }
 
   void saveToFile(String sinal) async {
@@ -60,7 +64,7 @@ class MyDataSingleton {
     }
     final file = sinal!='' ? 
                   File('${directory.path}/$sinal/${sinal}_$now.txt') : 
-                  File('${directory.path}/my_file_$now.txt');
+                  File('${directory.path}/$now.txt');
     print(file);
     await file.writeAsString(dadosRecebidos.toString());
   }
@@ -77,5 +81,22 @@ class MyDataSingleton {
 
   void setNumRcv(int v){
     _numRcv.add(v);
+  }
+
+  bool allZero(){
+    int minValue = 0;
+    int maxValue = 0;
+    for(var k in dadosRecebidos){
+      minValue = k.reduce(min)<minValue? k.reduce(min):minValue;
+      maxValue = k.reduce(max)>maxValue? k.reduce(max):maxValue;
+    }
+    if( (minValue==0 && maxValue==0) || 
+        (minValue==-1 && maxValue==0) ||
+        (minValue==-1 && maxValue==-1) ){
+      error=true;
+      return true;
+    }
+    error = false;
+    return false;
   }
 }

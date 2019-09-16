@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "277476210555",
+    "firebase_url": "https://srlibras.firebaseio.com",
+    "project_id": "srlibras",
+    "storage_bucket": "srlibras.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:277476210555:android:036c043ca9f801344cafde",
+        "android_client_info": {
+          "package_name": "com.flutter.srlibras"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "277476210555-3mglint8bii86q9n8sij7gimdcvqr840.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flutter.srlibras",
+            "certificate_hash": "de449282b89fd94c79bd1b7c3047f1a93138087e"
+          }
+        },
+        {
+          "client_id": "277476210555-230k0toa5q2jdg6ff9q8aubc020sesgj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHmlmj8v1jt55Q502W1Z8fF32bHNRmzGc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "277476210555-230k0toa5q2jdg6ff9q8aubc020sesgj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

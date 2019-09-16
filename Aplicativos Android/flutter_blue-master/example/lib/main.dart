@@ -73,7 +73,7 @@ class FindDevicesScreen extends StatelessWidget {
   const FindDevicesScreen({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    MyDataSingleton myData = MyDataSingleton();
+    final MyDataSingleton myData = MyDataSingleton();
     return Scaffold(
       appBar: AppBar(
         title: Text('Find Devices'),
@@ -104,7 +104,7 @@ class FindDevicesScreen extends StatelessWidget {
                                         child: Text('OPEN'),
                                         onPressed: () { 
                                           myData.clear();
-                                          print("vishhh");
+                                          // print("vishhh");
                                           return Navigator.of(context)
                                             .push(
                                               MaterialPageRoute(
@@ -211,6 +211,13 @@ class DeviceScreen extends StatelessWidget {
                       icon: Icon(Icons.save),
                       onPressed: () {
                         myData.saveToFile(textController.text);
+                      },
+                    ),
+                    IconButton(
+                      iconSize: 70,
+                      icon: Icon(Icons.cancel),
+                      onPressed: () {
+                        myData.clear();
                       },
                     ),
                   ]

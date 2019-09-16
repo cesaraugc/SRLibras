@@ -224,7 +224,8 @@ class _CharacteristicTile2State extends State<CharacteristicTile2> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            Text(snapshot.data.toString())
+                            Text(snapshot.data.toString()),
+                            Text(myData.error? "Recebido com erro.": "Recebido corretamente.")
                           ]
                         );
                       }
