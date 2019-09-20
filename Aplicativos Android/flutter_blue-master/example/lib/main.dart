@@ -4,6 +4,8 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:rxdart/rxdart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:SrLibras/widgets.dart';
@@ -168,6 +170,7 @@ class FindDevicesScreen extends StatelessWidget {
 }
 
 final textController = TextEditingController();
+
 // MyDataSingleton myData = MyDataSingleton();
 class DeviceScreen extends StatelessWidget {
   const DeviceScreen({Key key, this.device, this.myData //this.textController
@@ -178,6 +181,7 @@ class DeviceScreen extends StatelessWidget {
 
   List<Widget> _buildServiceTiles(List<BluetoothService> services) {
     print(device.name);
+    
     return services
         .map(
           (s) { 
@@ -206,20 +210,59 @@ class DeviceScreen extends StatelessWidget {
                         labelText: 'Nome do sinal',
                       ),
                     ),
-                    IconButton(
-                      iconSize: 70,
-                      icon: Icon(Icons.save),
-                      onPressed: () {
-                        myData.saveToFile(textController.text);
-                      },
-                    ),
-                    IconButton(
-                      iconSize: 70,
-                      icon: Icon(Icons.cancel),
-                      onPressed: () {
-                        myData.clear();
-                      },
-                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                      IconButton(
+                        iconSize: 70,
+                        icon: Icon(Icons.save),
+                        onPressed: () {
+                          myData.saveToFile(textController.text);
+                        },
+                      ),
+                      IconButton(
+                        iconSize: 70,
+                        icon: Icon(Icons.cancel),
+                        onPressed: () {
+                          myData.clear();
+                        },
+                      ),
+                      IconButton(
+                        iconSize: 70,
+                        icon: Icon(Icons.translate),
+                        onPressed: () async {
+                          var result = await myData.toNeuralNetwork();
+                          myData.setLeitura(result);
+                          print(result);
+                        },
+                      ),
+                    ],),
+                    
+                    StreamBuilder<String>(
+                    stream: myData.resultNN,
+                    initialData: 'Inicial',
+                    builder: (c, snapshot) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(18.0),
+                              child:
+                                Text(
+                                  snapshot.data.length>0 ? "Resultado: " + snapshot.data : '',
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25, 
+                                                  foreground: Paint()
+                                                    ..style = PaintingStyle.fill
+                                                    ..strokeWidth = 6
+                                                    ..color = Colors.blue[700],),
+                                )
+                            )
+                          ]
+                        );
+                      }
+                  )
+
+
                   ]
                 ) 
                 : Container(width: 0.0,height: 0.0);
