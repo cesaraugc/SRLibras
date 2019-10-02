@@ -174,7 +174,7 @@ class MyDataSingleton {
         }
       }
       print('Max: $maxN --- $idx');
-      return labels['alfabeto-detector'][idx];
+      return labels['alfabeto-detector'][idx] + ":" + maxN.toString();
   }
 
 
