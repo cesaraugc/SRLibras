@@ -1,0 +1,2 @@
+A ideia aqui é capturar continuamente todas as letras do alfabeto.
+Em seguida, será analisada a variação de energia.

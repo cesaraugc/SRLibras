@@ -176,48 +176,14 @@ void loop() {
       splitInBytes();
     }
 
-    for(int i=0; i<60; i++)
-      todos_dados[amostra][i] = todos_dedos[i ];
-    amostra++;
-    delay(20);
-
-    if(amostra>1000){
-      Serial.println("ESTOUROUUU");
-    }
+    send_data = true;
   }
 
   if(send_data){
-    unsigned long tempoDecorrido = millis() - initial;
-    Serial.print("Dados obtidos: ");
-    Serial.println(amostra);
-    Serial.print("Tempo: ");
-    Serial.println(tempoDecorrido);
-
-    // printAfter();
-
-    int inteira = amostra/8;
-    int resto = amostra%8;
-
-    int total = resto == 0? inteira : inteira+1;
-
-    for(int i=0; i<total; i++){
-
-      for(int j=0; j<8; j++){
-        for(int l=0; l<60; l++){
-          pacote_envio[l+60*j] = todos_dados[j+8*i][l];
-        }
-      }
-      if(i<inteira)
-        pCharacteristic->setValue(pacote_envio, 480); //480 = 60*8
-      else
-        pCharacteristic->setValue(pacote_envio, 60*resto); //resto da divisão por 8
-      pCharacteristic->notify();
-      Serial.println("Enviados 480");
-      delay(200);
-    }
+    pCharacteristic->setValue(todos_dedos, 60);
+    pCharacteristic->notify();
+    delay(200);
     send_data = false;
-    amostra = 0;
-    Serial.println("Fim do envio");
   }
 }
 

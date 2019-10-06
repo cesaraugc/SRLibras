@@ -128,36 +128,31 @@ class ScanResultTile extends StatelessWidget {
 }
 
 
-class CharacteristicTile2 extends StatefulWidget {
+class CharacteristicTileRealTime extends StatefulWidget {
   final BluetoothCharacteristic characteristic;
   final MyDataSingleton myData;
 
-  const CharacteristicTile2(
+  const CharacteristicTileRealTime(
       {Key key,
       this.characteristic,
       this.myData});
 
   @override
-  _CharacteristicTile2State createState() => new _CharacteristicTile2State(
+  _CharacteristicTileRealTimeState createState() => new _CharacteristicTileRealTimeState(
     characteristic: characteristic,
     myData:myData
   );
 }
 
 
-class _CharacteristicTile2State extends State<CharacteristicTile2> {
+class _CharacteristicTileRealTimeState extends State<CharacteristicTileRealTime> {
   final BluetoothCharacteristic characteristic;
   final MyDataSingleton myData;
 
-  _CharacteristicTile2State(
+  _CharacteristicTileRealTimeState(
       {Key key,
       this.characteristic,
       this.myData});
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +164,7 @@ class _CharacteristicTile2State extends State<CharacteristicTile2> {
         String uuid = characteristic.uuid.toString();
         // MyDataSingleton myData = MyDataSingleton();
         if(uuid == UUID_READ && value.length > 0){
-          myData.setData(value.toList());
+          myData.setDataRealTime(value.toList());
         }
         
         return Column(
@@ -208,57 +203,57 @@ class _CharacteristicTile2State extends State<CharacteristicTile2> {
                     stream: myData.canReceive,
                     initialData: true,
                     builder: (c, snapshot) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            _buildButtons(snapshot.data),
-                          ]
-                        );
-                      }
+                      bool podeReceber = snapshot.data;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              IconButton(
+                                iconSize: 70,
+                                icon: podeReceber?
+                                  Icon(
+                                    Icons.play_arrow,
+                                    color: Theme.of(context).iconTheme.color.withOpacity(0.5),
+                                  ) :
+                                  SizedBox(
+                                    child: CircularProgressIndicator(
+                                      valueColor:
+                                      AlwaysStoppedAnimation(Colors.grey),
+                                    ),
+                                  ),
+                                onPressed: podeReceber?
+                                  (){
+                                    myData.clear(); 
+                                    characteristic.write([83]);
+                                    myData.setReceive(false);
+                                  } : null
+                              ),
+                              IconButton(
+                                iconSize: 70,
+                                icon: 
+                                  Icon(
+                                    Icons.stop,
+                                    color: Theme.of(context).iconTheme.color.withOpacity(0.5),
+                                  ), 
+                                onPressed: 
+                                  (){
+                                    // myData.clear(); 
+                                    characteristic.write([80]);
+                                    myData.setReceive(true);
+                                  } 
+                              ),
+                            ],
+                          )
+                        ]
+                      );
+                    }
                   ),
-
-                  StreamBuilder<int>(
-                    stream: myData.numRcv,
-                    initialData: 0,
-                    builder: (c, snapshot) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text(snapshot.data.toString()),
-                            Text(myData.error? "Recebido com erro.": "Recebido corretamente.")
-                          ]
-                        );
-                      }
-                  )
                 ]
               ) : Container(width: 0.0,height: 0.0),
-            
           ],
         );
       },
-    );
-  }
-
-  Widget _buildButtons(podeReceber) {
-    return new IconButton(
-        iconSize: 70,
-        icon: podeReceber?
-          Icon(
-            Icons.play_arrow,
-            color: Theme.of(context).iconTheme.color.withOpacity(0.5),
-          ) :
-          SizedBox(
-            child: CircularProgressIndicator(
-              valueColor:
-              AlwaysStoppedAnimation(Colors.grey),
-            ),
-          ),
-        onPressed: podeReceber?
-          (){
-            myData.clear(); 
-            characteristic.write([83]);
-            myData.setReceive(false);
-          } : null
     );
   }
 }

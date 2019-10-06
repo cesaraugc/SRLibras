@@ -75,7 +75,9 @@ class FindDevicesScreen extends StatelessWidget {
   const FindDevicesScreen({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    
     final MyDataSingleton myData = MyDataSingleton();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Find Devices'),
@@ -92,35 +94,62 @@ class FindDevicesScreen extends StatelessWidget {
                 initialData: [],
                 builder: (c, snapshot) => Column(
                       children: snapshot.data
-                          .map((d) => ListTile(
+                          .map((d) { 
+                            return ListTile(
                                 title: Text(d.name),
                                 subtitle: Text(d.id.toString()),
-                                trailing: StreamBuilder<BluetoothDeviceState>(
-                                  stream: d.state,
-                                  initialData:
-                                      BluetoothDeviceState.disconnected,
-                                  builder: (c, snapshot) {
-                                    if (snapshot.data ==
-                                        BluetoothDeviceState.connected) {
-                                      return RaisedButton(
-                                        child: Text('OPEN'),
-                                        onPressed: () { 
-                                          myData.clear();
-                                          // print("vishhh");
-                                          return Navigator.of(context)
-                                            .push(
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    DeviceScreen(device: d, myData: myData,)
-                                              )
+                                trailing: 
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      StreamBuilder<BluetoothDeviceState>(
+                                        stream: d.state,
+                                        initialData: BluetoothDeviceState.disconnected,
+                                        builder: (c, snapshot) {
+                                          if (snapshot.data == BluetoothDeviceState.connected) {
+                                            return Row(
+                                              children: <Widget>[
+                                                RaisedButton(
+                                                      child: Text('REAL-TIME'),
+                                                      onPressed: () { 
+                                                        print("real time");
+                                                        myData.clear();
+                                                        return Navigator.of(context)
+                                                          .push(
+                                                            MaterialPageRoute(
+                                                              builder: (context) {
+                                                                print("ESTOU NO CONTX");
+                                                                return DeviceScreenRealTime(device: d, myData: myData);
+                                                              }
+                                                            )
+                                                          );
+                                                      },
+                                                    ),
+                                                RaisedButton(
+                                                  child: Text('GET DATA'),
+                                                  onPressed: () { 
+                                                    myData.clear();
+                                                    print("get data");
+                                                    // return Navigator.of(context)
+                                                      // .push(
+                                                        // MaterialPageRoute(
+                                                          // builder: (context) =>
+                                                              // DeviceScreenGetData(device: d, myData: myData,)
+                                                        // )
+                                                      // );
+                                                  },
+                                                ),
+                                              ],
                                             );
+                                          }
+                                          return Text(snapshot.data.toString());
                                         },
-                                      );
-                                    }
-                                    return Text(snapshot.data.toString());
-                                  },
-                                ),
-                              ))
+                                      ),
+                                    ],
+                                  )
+                              );
+                            }
+                          )
                           .toList(),
                     ),
               ),
@@ -132,12 +161,17 @@ class FindDevicesScreen extends StatelessWidget {
                           .map(
                             (r) => ScanResultTile(
                                   result: r,
-                                  onTap: () => Navigator.of(context).push(
-                                          MaterialPageRoute(builder: (context) {
-                                            r.device.connect();
-                                            r.device.discoverServices();
-                                            return DeviceScreen(device: r.device, myData: myData);
-                                      })),
+                                  onTap: () {
+                                    r.device.connect();
+                                    r.device.discoverServices();
+                                  }
+                                  
+                                    // Navigator.of(context).push(
+                                    //       MaterialPageRoute(builder: (context) {
+                                    //         r.device.connect();
+                                    //         r.device.discoverServices();
+                                    //         return DeviceScreen(device: r.device, myData: myData);
+                                    //   })),
                                 ),
                           )
                           .toList(),
@@ -172,21 +206,19 @@ class FindDevicesScreen extends StatelessWidget {
 final textController = TextEditingController();
 
 // MyDataSingleton myData = MyDataSingleton();
-class DeviceScreen extends StatelessWidget {
-  const DeviceScreen({Key key, this.device, this.myData //this.textController
+class DeviceScreenRealTime extends StatelessWidget {
+  const DeviceScreenRealTime({Key key, this.device, this.myData //this.textController
                       }) : super(key: key);
 
   final BluetoothDevice device;
   final MyDataSingleton myData;
 
-  List<Widget> _buildServiceTiles(List<BluetoothService> services) {
-    print(device.name);
+  Column _buildServiceTiles(List<BluetoothService> services) {
     
-    return services
-        .map(
-          (s) { 
-              return s.uuid.toString().toUpperCase()=="6E400001-B5A3-F393-E0A9-E50E24DCCA9E"?
-                Column(
+    print(services.length);
+    for(var s in services){
+      if(s.uuid.toString().toUpperCase()=="6E400001-B5A3-F393-E0A9-E50E24DCCA9E"){
+        return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Column(
@@ -195,7 +227,7 @@ class DeviceScreen extends StatelessWidget {
                       children: 
                         s.characteristics.map(
                           (c) {
-                            return CharacteristicTile2(
+                            return CharacteristicTileRealTime(
                                 characteristic: c,
                                 myData:myData
                             );
@@ -203,72 +235,96 @@ class DeviceScreen extends StatelessWidget {
                         )
                         .toList(),
                     ),
-                    TextField(
-                      controller: textController,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Nome do sinal',
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                      IconButton(
-                        iconSize: 70,
-                        icon: Icon(Icons.save),
-                        onPressed: () {
-                          myData.saveToFile(textController.text);
-                        },
-                      ),
-                      IconButton(
-                        iconSize: 70,
-                        icon: Icon(Icons.cancel),
-                        onPressed: () {
-                          myData.clear();
-                        },
-                      ),
-                      IconButton(
-                        iconSize: 70,
-                        icon: Icon(Icons.translate),
-                        onPressed: () async {
-                          var result = await myData.toNeuralNetwork();
-                          myData.setLeitura(result);
-                          print(result);
-                        },
-                      ),
-                    ],),
                     
                     StreamBuilder<String>(
-                    stream: myData.resultNN,
-                    initialData: 'Inicial',
-                    builder: (c, snapshot) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(18.0),
-                              child:
-                                Text(
-                                  snapshot.data.length>0 ? "Resultado: " + snapshot.data : '',
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25, 
-                                                  foreground: Paint()
-                                                    ..style = PaintingStyle.fill
-                                                    ..strokeWidth = 6
-                                                    ..color = Colors.blue[700],),
-                                )
-                            )
-                          ]
-                        );
+                      stream: myData.resultNN,
+                      initialData: 'Inicial',
+                      builder: (c, snapshot) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(18.0),
+                                child:
+                                  Text(
+                                    snapshot.data.length>0 ? "Resultado: " + snapshot.data : '',
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25, 
+                                                    foreground: Paint()
+                                                      ..style = PaintingStyle.fill
+                                                      ..strokeWidth = 6
+                                                      ..color = Colors.blue[700],),
+                                  )
+                              )
+                            ]
+                          );
                       }
-                  )
-
-
+                    )
                   ]
-                ) 
-                : Container(width: 0.0,height: 0.0);
-          }
-        )
-        .toList();
+                ); 
+      }else{
+        return Column(
+          children: <Widget>[
+            Container(width: 0.0,height: 0.0)
+          ],
+        ); 
+          
+      }
+
+    }
+
+    // return services
+    //     .map(
+    //       (s) { 
+    //           return s.uuid.toString().toUpperCase()=="6E400001-B5A3-F393-E0A9-E50E24DCCA9E"?
+    //             Column(
+    //               mainAxisAlignment: MainAxisAlignment.center,
+    //               children: <Widget>[
+    //                 Column(
+    //                   mainAxisSize: MainAxisSize.min,
+    //                   mainAxisAlignment: MainAxisAlignment.center,
+    //                   children: 
+    //                     s.characteristics.map(
+    //                       (c) {
+    //                         return CharacteristicTileRealTime(
+    //                             characteristic: c,
+    //                             myData:myData
+    //                         );
+    //                       }
+    //                     )
+    //                     .toList(),
+    //                 ),
+                    
+    //                 StreamBuilder<String>(
+    //                 stream: myData.resultNN,
+    //                 initialData: 'Inicial',
+    //                 builder: (c, snapshot) {
+    //                     return Column(
+    //                       crossAxisAlignment: CrossAxisAlignment.center,
+    //                       children: <Widget>[
+    //                         Padding(
+    //                           padding: const EdgeInsets.all(18.0),
+    //                           child:
+    //                             Text(
+    //                               snapshot.data.length>0 ? "Resultado: " + snapshot.data : '',
+    //                               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25, 
+    //                                               foreground: Paint()
+    //                                                 ..style = PaintingStyle.fill
+    //                                                 ..strokeWidth = 6
+    //                                                 ..color = Colors.blue[700],),
+    //                             )
+    //                         )
+    //                       ]
+    //                     );
+    //                   }
+    //               )
+
+
+    //               ]
+    //             ) 
+    //             : Container(width: 0.0,height: 0.0);
+    //       }
+    //     )
+    //     .toList();
   }
 
   @override
@@ -349,14 +405,61 @@ class DeviceScreen extends StatelessWidget {
                     ),
                   ),
             ),
+
             StreamBuilder<List<BluetoothService>>(
               stream: device.services,
               initialData: [],
               builder: (c, snapshot) {
-                return Column(
-                  children: _buildServiceTiles(snapshot.data),
-                );
-              },
+                print(device.name);
+                var services = snapshot.data;
+                for(var s in services){
+                  if(s.uuid.toString().toUpperCase()=="6E400001-B5A3-F393-E0A9-E50E24DCCA9E"){
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: 
+                            s.characteristics.map(
+                              (c) {
+                                return CharacteristicTileRealTime(
+                                    characteristic: c,
+                                    myData:myData
+                                );
+                              }
+                            )
+                            .toList(),
+                        ),
+                        StreamBuilder<String>(
+                          stream: myData.resultNN,
+                          initialData: 'Inicial',
+                          builder: (c, snapshot) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.all(18.0),
+                                    child:
+                                      Text(
+                                        snapshot.data.length>0 ? "Resultado: " + snapshot.data : '',
+                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25, 
+                                                        foreground: Paint()
+                                                          ..style = PaintingStyle.fill
+                                                          ..strokeWidth = 6
+                                                          ..color = Colors.blue[700],),
+                                      )
+                                  )
+                                ]
+                              );
+                          }
+                        )
+                      ]
+                    ); 
+                  } 
+                }
+                return Container(width: 0.0,height: 0.0);
+              }
             ),
           ],
         ),
@@ -364,3 +467,10 @@ class DeviceScreen extends StatelessWidget {
     );
   }
 }
+
+
+
+                // return _buildServiceTiles(snapshot.data);
+                // return Column(
+                //   children: _buildServiceTiles(snapshot.data),
+                // );
