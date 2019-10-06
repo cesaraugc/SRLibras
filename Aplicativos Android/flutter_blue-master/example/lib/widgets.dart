@@ -281,3 +281,123 @@ class AdapterStateTile extends StatelessWidget {
     );
   }
 }
+
+
+class CharacteristicTileGetData extends StatefulWidget {
+  final BluetoothCharacteristic characteristic;
+  final MyDataSingleton myData;
+
+  const CharacteristicTileGetData(
+      {Key key,
+      this.characteristic,
+      this.myData});
+
+  @override
+  _CharacteristicTileGetDataState createState() => new _CharacteristicTileGetDataState(
+    characteristic: characteristic,
+    myData:myData
+  );
+}
+
+
+class _CharacteristicTileGetDataState extends State<CharacteristicTileGetData> {
+  final BluetoothCharacteristic characteristic;
+  final MyDataSingleton myData;
+
+  _CharacteristicTileGetDataState(
+      {Key key,
+      this.characteristic,
+      this.myData});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<int>>(
+      stream: characteristic.value,
+      initialData: characteristic.lastValue,
+      builder: (c, snapshot) {
+        final value = snapshot.data;
+        String uuid = characteristic.uuid.toString();
+        if(uuid == UUID_READ && value.length > 0){
+          myData.setDataForSaving(value.toList());
+        }
+        
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+
+            uuid == UUID_READ?
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  IconButton(
+                    iconSize: 70,
+                    icon: Icon(
+                        characteristic.isNotifying
+                            ? Icons.sync_disabled
+                            : Icons.sync,
+                        color: Theme.of(context).iconTheme.color.withOpacity(0.5)),
+                    onPressed: (){
+                      characteristic.setNotifyValue(!characteristic.isNotifying);
+                    },
+                  )
+                ],
+              ) : Container(width: 0.0,height: 0.0),
+            uuid == UUID_WRITE?
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  StreamBuilder<bool>(
+                    stream: myData.canReceive,
+                    initialData: true,
+                    builder: (c, snapshot) {
+                      bool podeReceber = snapshot.data;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          IconButton(
+                            iconSize: 70,
+                            icon: podeReceber?
+                              Icon(
+                                Icons.play_arrow,
+                                color: Theme.of(context).iconTheme.color.withOpacity(0.5),
+                              ) :
+                              SizedBox(
+                                child: CircularProgressIndicator(
+                                  valueColor:
+                                  AlwaysStoppedAnimation(Colors.grey),
+                                ),
+                              ),
+                            onPressed: podeReceber?
+                              (){
+                                myData.clear(); 
+                                characteristic.write([83]);
+                                myData.setReceive(false);
+                              } : null
+                          )
+                        ]
+                      );
+                    }
+                  ),
+                  StreamBuilder<int>(
+                    stream: myData.numRcv,
+                    initialData: 0,
+                    builder: (c, snapshot) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Text(snapshot.data.toString()),
+                            Text(myData.error? "Recebido com erro.": "Recebido corretamente.")
+                          ]
+                        );
+                      }
+                  )
+                ]
+              ) : Container(width: 0.0,height: 0.0),
+          ],
+        );
+      },
+    );
+  }
+}
